@@ -35,5 +35,37 @@
             messages.appendChild(li);
         });
     </script>
+    // ... (previous frontend code)
+
+sendButton.addEventListener('click', () => {
+    const message = messageInput.value;
+    if (message.trim() !== '') {
+        const userId = 'user123'; // Replace with the actual user ID
+        const messageData = {
+            userId,
+            message,
+        };
+
+        fetch('/api/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(messageData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response if needed
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+
+        messageInput.value = '';
+    }
+});
+
+// ... (continue with the rest of the frontend code)
+
 </body>
 </html>
