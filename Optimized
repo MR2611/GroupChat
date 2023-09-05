@@ -1,0 +1,22 @@
+const cron = require('node-cron');
+
+// Schedule the task to run every night (e.g., at midnight)
+cron.schedule('0 0 * * *', async () => {
+  // Calculate the date one day ago
+  const oneDayAgo = new Date();
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+
+  try {
+    // Find and move messages older than one day to ArchivedChat
+    const oldMessages = await Chat.find({ timestamp: { $lt: oneDayAgo } });
+
+    if (oldMessages.length > 0) {
+      await ArchivedChat.insertMany(oldMessages);
+    }
+
+    // Delete the old messages from Chat
+    await Chat.deleteMany({ timestamp: { $lt: oneDayAgo } });
+  } catch (error) {
+    console.error('Error archiving and deleting messages:', error);
+  }
+});
