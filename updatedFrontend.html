@@ -1,0 +1,27 @@
+const socket = new WebSocket('ws://localhost:3000'); // Replace with your server's URL
+
+socket.addEventListener('message', (event) => {
+  const messageData = JSON.parse(event.data);
+
+  // Handle the received message data (e.g., update the chat interface)
+  // Example: Append the message to the chat window
+  const messages = document.getElementById('messages');
+  const li = document.createElement('li');
+  li.textContent = `${messageData.userId}: ${messageData.message}`;
+  messages.appendChild(li);
+});
+
+// Handle user sending a message
+sendButton.addEventListener('click', () => {
+  const message = messageInput.value;
+  if (message.trim() !== '') {
+    const userId = 'user123'; // Replace with the actual user ID
+    const messageData = {
+      userId,
+      message,
+    };
+
+    socket.send(JSON.stringify(messageData));
+    messageInput.value = '';
+  }
+});
