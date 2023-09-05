@@ -1,0 +1,30 @@
+// Add a user to a group
+app.post('/api/groups/:groupId/addMember', async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const { userId } = req.body;
+
+    // Check if the user is an admin of the group (authentication required)
+    const isAdmin = await checkAdminStatus(groupId, req.user.userId); // Implement this function to check admin status
+
+    if (!isAdmin) {
+      return res.status(403).json({ message: 'Permission denied' });
+    }
+
+    // Check if the user is already a member of the group
+    const isMember = await GroupMember.exists({ groupId, userId });
+
+    if (isMember) {
+      return res.status(400).json({ message: 'User is already a member' });
+    }
+
+    // Add the user to the group
+    const groupMember = new GroupMember({ groupId, userId, isAdmin: false });
+    await groupMember.save();
+
+    res.status(201).json({ message: 'User added to the group' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'An error occurred' });
+  }
+});
