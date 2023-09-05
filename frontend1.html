@@ -31,5 +31,49 @@
             </div>
         </form>
     </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('signup-form');
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+
+            const userData = {
+                name,
+                email,
+                phone,
+                password,
+            };
+
+            try {
+                const response = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                if (response.ok) {
+                    // User signed up successfully
+                    window.location.href = '/login'; // Redirect to login page
+                } else if (response.status === 409) {
+                    // User already exists
+                    alert('User already exists. Please use a different email or login.');
+                } else {
+                    // Handle other errors
+                    alert('An error occurred. Please try again later.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
